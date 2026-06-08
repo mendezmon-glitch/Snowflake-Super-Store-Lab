@@ -5,6 +5,7 @@ This project demonstrates the implementation of a complete analytics solution us
 The objective was to simulate a modern enterprise analytics architecture, starting from raw CSV files stored in Amazon S3, loading and transforming data in Snowflake using a Medallion Architecture (Bronze, Silver, Gold), and finally delivering insights through a Power BI dashboard.
 
 ## Architecture
+```
 CSV Files
 ↓
 AWS S3 Bucket
@@ -20,7 +21,7 @@ Silver Layer (Data Cleansing & Standardization)
 Gold Layer (Dimensional Model / Star Schema)
 ↓
 Power BI Dashboard
-
+```
 ## Technologies Used
 Snowflake
 AWS S3
@@ -57,12 +58,12 @@ SALES_CLEAN
 Business-ready dimensional model.
 
 Dimensions:
-
+```
 DIM_CUSTOMER
 DIM_PRODUCT
 DIM_LOCATION
 DIM_DATE
-
+```
 Fact Table:
 
 FACT_SALES
@@ -72,13 +73,13 @@ The model uses surrogate keys to support dimensional modeling best practices.
 ## Power BI Data Model
 
 A Star Schema was implemented using:
-
+```
 Customer Dimension
 Product Dimension
 Location Dimension
 Date Dimension
 Sales Fact Table
-
+```
 This design improves scalability, reporting performance, and maintainability.
 
 ## Key Learnings
@@ -122,7 +123,7 @@ Consumption Layer:
 Power BI Dashboard
 
 ## sql/Snowflake
-
+```
 Database setup
 create or replace warehouse lab_wh
 with
@@ -142,10 +143,10 @@ use database saleslab;
 create or replace schema bronze;
 create or replace schema silver;
 create or replace schema gold;
-
+```
 
 ## AWS integration scripts
-
+```
 create or replace storage integration S3_INT_LAB
 TYPE = EXTERNAL_STAGE
 STORAGE_PROVIDER = S3
@@ -156,10 +157,11 @@ STORAGE_ALLOWED_LOCATIONS = ('s3://luis-bi-lab-2026/Lab1/');
 SELECT CURRENT_VERSION();
 
 DESC INTEGRATION S3_INT_LAB;
-
+```
 
 
 ## Bronze layer scripts
+```
 CREATE OR REPLACE STAGE BRONZE.LAB1_STAGE
 STORAGE_INTEGRATION = S3_INT_LAB
 URL = 's3://luis-bi-lab-2026/Lab1/';
@@ -221,8 +223,10 @@ SELECT ORDER_DATE
 FROM BRONZE.TRAIN_RAW
 WHERE ORDER_DATE LIKE '31/%'
 LIMIT 5;
+```
 
 ## Silver layer transformations
+```
 CREATE OR REPLACE TABLE SILVER.SALES_CLEAN AS 
 SELECT
 ROW_ID,
@@ -251,8 +255,9 @@ SELECT
 MIN(ORDER_DATE),
 MAX(ORDER_DATE)
 FROM SILVER.SALES_CLEAN;
-
+```
 ## Gold layer dimensional model
+```
 CREATE OR REPLACE TABLE GOLD.DIM_CUSTOMER AS
 SELECT
 ROW_NUMBER() OVER(
@@ -310,9 +315,10 @@ FROM SILVER.SALES_CLEAN);
 SELECT * 
 FROM GOLD.DIM_LOCATION
 LIMIT 10;
+```
 
 ## Gold Joins
-
+```
 CREATE OR REPLACE TABLE GOLD.FACT_SALES AS
 SELECT
 S.ROW_ID,
@@ -366,9 +372,9 @@ DAYOFWEEK(FULL_DATE) AS DAY_OF_WEEK,
 DAYNAME(FULL_DATE) AS DAY_NAME,
 WEEK(FULL_DATE) AS WEEK_NUMBER
 FROM DATE_SERIES;
-
+```
 ## Some GOLD validations
-
+```
 SELECT *
 FROM GOLD.DIM_DATE
 LIMIT 10;
@@ -387,10 +393,11 @@ SELECT CURRENT_ACCOUNT_NAME();
 SELECT CURRENT_REGION();
 SELECT SYSTEM$ALLOWLIST();
 SELECT CURRENT_USER();
-
+```
 /images
 
 ## Architecture diagrams
+```
 CSV Files
     ↓
 AWS S3
@@ -411,7 +418,7 @@ GOLD Star Schema
     └── FACT_SALES
     ↓
 Power BI Dashboard
-
+```
 ## Data model screenshots
 <img width="1342" height="621" alt="image" src="https://github.com/user-attachments/assets/943fc3b2-c476-4e1d-9b19-45f56d2590f1" />
 
